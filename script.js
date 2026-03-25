@@ -1,49 +1,30 @@
 // ============================================================
-//  UNNE Atelier — script.js (Versão Final com Botões e Deploy)
+//  UNNE Atelier — script.js (VERSÃO FINAL UNIFICADA)
 // ============================================================
 
-// CONFIGURAÇÃO DE AMBIENTE: Detecta se está no PC ou no Servidor Render
+// CONFIGURAÇÃO DE AMBIENTE
 const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:3000/api' 
     : '/api';
 
 // ── VARIÁVEIS GLOBAIS ─────────────────────
-let usuarioLogado = null;
 let carrinho = JSON.parse(localStorage.getItem('unne_carrinho') || '[]');
 let cupomAtivo = null;
 
-const statusLabel = {
-  'aguardando_pagamento': 'Aguardando pagamento',
-  'pago': 'Pago',
-  'em_separacao': 'Em separação',
-  'enviado': 'Enviado',
-  'entregue': 'Entregue',
-  'cancelado': 'Cancelado',
-};
-
-const statusClasse = {
-  'aguardando_pagamento': 'bs-aguardando',
-  'pago': 'bs-pago',
-  'em_separacao': 'bs-separacao',
-  'enviado': 'bs-enviado',
-  'entregue': 'bs-entregue',
-  'cancelado': 'bs-cancelado',
-};
-
 // ── UTILITÁRIOS ───────────────────────────
+function fmt(v) {
+  return 'R$ ' + Number(v).toFixed(2).replace('.', ',');
+}
+
 window.toast = function (msg, tipo = 'ok') {
   const t = document.getElementById('toastU');
-  if (!t) return;
+  if (!t) { console.log(msg); return; }
   t.textContent = msg;
   t.className = `toast-u ${tipo} visivel`;
   setTimeout(() => t.classList.remove('visivel'), 3000);
 };
 
-function fmt(v) {
-  return 'R$ ' + Number(v).toFixed(2).replace('.', ',');
-}
-
-// ── CARRINHO - LÓGICA CENTRAL ────────────────
+// ── LÓGICA DO CARRINHO ────────────────────
 function salvarCarrinho() {
   localStorage.setItem('unne_carrinho', JSON.stringify(carrinho));
   atualizarBadge();
@@ -52,9 +33,17 @@ function salvarCarrinho() {
 
 function atualizarBadge() {
   const totalItems = carrinho.reduce((s, i) => s + i.qty, 0);
-  document.querySelectorAll('.nav-carrinho-count').forEach(el => {
+  
+  // Atualiza o contador do Header do Carrinho (id="carrBadgeHeader")
+  const badgeHeader = document.getElementById('carrBadgeHeader');
+  if (badgeHeader) {
+    badgeHeader.textContent = totalItems;
+  }
+
+  // Atualiza ícones globais (se houver no nav)
+  document.querySelectorAll('.nav-carrinho-count, .cart-count').forEach(el => {
     el.textContent = totalItems;
-    el.classList.toggle('visivel', totalItems > 0);
+    el.style.display = totalItems > 0 ? 'flex' : 'none';
   });
 }
 
@@ -77,17 +66,15 @@ window.adicionarAoCarrinho = function (id, nome, preco, imagem, btn) {
   } else {
     carrinho.push({ id, nome, preco: Number(preco), imagem, qty: 1 });
   }
+  
   salvarCarrinho();
   
   if (btn) {
     const originalText = btn.innerHTML;
     btn.innerHTML = '✓ ADICIONADO';
-    btn.classList.add('adicionado');
-    setTimeout(() => { 
-      btn.innerHTML = originalText; 
-      btn.classList.remove('adicionado'); 
-    }, 1500);
+    setTimeout(() => { btn.innerHTML = originalText; }, 1000);
   }
+  
   window.abrirCarrinho();
 };
 
@@ -104,13 +91,64 @@ window.removerItem = function (id) {
   salvarCarrinho();
 };
 
+// ── CUPONS ────────────────────────────────
+
+// 1. Revelar Cupom na Home
+window.liberarCupom = async function () {
+  const p = document.getElementById('promoTexto');
+  const b = document.getElementById('btnCupom');
+  if (!b) return;
+
+  b.innerText = 'Aguarde...';
+  try {
+    const res = await fetch(`${API}/cupom/COURO2026`);
+    const data = await res.json();
+    if (res.ok) {
+      if(p) p.innerHTML = `Cupom Liberado: <strong>${data.codigo}</strong> — ${data.desconto}% OFF`;
+      b.innerText = 'LIBERADO';
+      b.disabled = true;
+    }
+  } catch {
+    if(p) p.innerHTML = 'Cupom de Boas-vindas: <strong>BEMVINDO10</strong>';
+    b.innerText = 'LIBERADO';
+  }
+};
+
+// 2. Aplicar Cupom no Drawer do Carrinho (id="aplicarCupomCarr")
+window.aplicarCupomCarr = async function() {
+  const input = document.getElementById('inputCupomCarr');
+  const msg = document.getElementById('cupomMsg');
+  if (!input) return;
+
+  const codigo = input.value.trim().toUpperCase();
+  if (!codigo) return;
+
+  try {
+    const res = await fetch(`${API}/cupom/${codigo}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      cupomAtivo = { codigo: data.codigo, desconto: data.desconto };
+      if(msg) { msg.innerText = "Cupom aplicado!"; msg.style.color = "green"; }
+      renderCarrinho();
+    } else {
+      if(msg) { msg.innerText = data.erro || "Inválido"; msg.style.color = "red"; }
+      cupomAtivo = null;
+      renderCarrinho();
+    }
+  } catch (err) {
+    if(msg) msg.innerText = "Erro ao validar";
+  }
+};
+
+// ── RENDERIZAÇÃO DO CARRINHO ──────────────
 function renderCarrinho() {
   const lista = document.getElementById('carrItens');
   const footer = document.getElementById('carrFooter');
   if (!lista) return;
 
-  if (!carrinho.length) {
-    lista.innerHTML = `<div class="carr-vazio"><span class="carr-vazio-icone">🛍</span><p>Seu carrinho está vazio</p></div>`;
+  if (carrinho.length === 0) {
+    lista.innerHTML = '<div class="carr-vazio"><span class="carr-vazio-icone">🛍</span><p>Seu carrinho está vazio</p></div>';
     if (footer) footer.style.display = 'none';
     return;
   }
@@ -132,174 +170,63 @@ function renderCarrinho() {
   `).join('');
 
   const subtotal = carrinho.reduce((s, i) => s + (i.preco * i.qty), 0);
-  const desconto = cupomAtivo ? subtotal * (cupomAtivo.desconto / 100) : 0;
-  const total = subtotal - desconto;
-
-  document.getElementById('carrSubtotal').textContent = fmt(subtotal);
-  document.getElementById('carrTotal').textContent = fmt(total);
+  let totalFinal = subtotal;
 
   const linhaDesc = document.getElementById('carrLinhaDesconto');
-  if (cupomAtivo && linhaDesc) {
-    linhaDesc.style.display = 'flex';
-    document.getElementById('carrDescontoLabel').textContent = `Cupom ${cupomAtivo.codigo}`;
-    document.getElementById('carrDescontoValor').textContent = `− ${fmt(desconto)}`;
-  } else if (linhaDesc) {
-    linhaDesc.style.display = 'none';
+  const valorDesc = document.getElementById('carrDescontoValor');
+  const labelDesc = document.getElementById('carrDescontoLabel');
+
+  if (cupomAtivo) {
+    const descReal = subtotal * (cupomAtivo.desconto / 100);
+    totalFinal = subtotal - descReal;
+    if (linhaDesc) linhaDesc.style.display = 'flex';
+    if (valorDesc) valorDesc.textContent = `- ${fmt(descReal)}`;
+    if (labelDesc) labelDesc.textContent = `Cupom ${cupomAtivo.codigo}`;
+  } else {
+    if (linhaDesc) linhaDesc.style.display = 'none';
   }
 
+  document.getElementById('carrSubtotal').textContent = fmt(subtotal);
+  document.getElementById('carrTotal').textContent = fmt(totalFinal);
   if (footer) footer.style.display = 'block';
 }
 
-// ── DOM CONTENT LOADED ─────────────────────
+// ── INICIALIZAÇÃO E BUSCA DE PRODUTOS ─────
 document.addEventListener('DOMContentLoaded', () => {
   
   // 1. CARREGAR DESTAQUES (HOME)
   const gridHome = document.querySelector('.grid-produtos');
   if (gridHome) {
-    fetch(`${API}/produtos?destaque=1`)
-      .then(r => r.json())
-      .then(produtos => {
-        if (!produtos.length) return;
-        gridHome.innerHTML = produtos.map(p => `
-          <div class="card">
-            <img src="${p.imagem_url}" alt="${p.nome}">
-            <h3>${p.nome}</h3>
-            <p>${fmt(p.preco)}</p>
-            <button class="btn-add-carrinho" onclick="adicionarAoCarrinho(${p.id}, '${p.nome}', ${p.preco}, '${p.imagem_url}', this)">
-              + ADICIONAR
-            </button>
-          </div>`).join('');
-      }).catch(err => console.error("Erro Destaques:", err));
-  }
-
-  // 2. CARREGAR COLEÇÃO COMPLETA
-  const galeriaColecao = document.getElementById('galeria-colecao-exclusiva');
-  if (galeriaColecao) {
-    galeriaColecao.innerHTML = '<p style="grid-column:1/-1;text-align:center">Carregando coleção...</p>';
-    fetch(`${API}/produtos`)
-      .then(r => r.json())
-      .then(produtos => {
-        if (!produtos.length) { galeriaColecao.innerHTML = '<p>Nenhum produto encontrado.</p>'; return; }
-        galeriaColecao.innerHTML = produtos.map(p => `
-          <div class="card-produto">
-            <img src="${p.imagem_url}" alt="${p.nome}">
-            <h3>${p.nome}</h3>
-            <p class="preco">${fmt(p.preco)}</p>
-            <button class="btn-add-carrinho" onclick="adicionarAoCarrinho(${p.id}, '${p.nome}', ${p.preco}, '${p.imagem_url}', this)">
-              + ADICIONAR
-            </button>
-          </div>`).join('');
-      }).catch(() => { galeriaColecao.innerHTML = '<p>Erro ao carregar produtos.</p>'; });
-  }
-
-  // 3. CARREGAR OUTLET
-  const galeriaOutlet = document.getElementById('galeriaOutlet');
-  if (galeriaOutlet) {
-    const DESCONTO_OUTLET = 30;
-    fetch(`${API}/outlet`)
-      .then(r => r.json())
-      .then(produtos => {
-        if (!produtos.length) {
-          galeriaOutlet.innerHTML = '<p>Nenhum produto no outlet hoje.</p>';
-          return;
-        }
-        galeriaOutlet.innerHTML = produtos.map(p => {
-          const precoOriginal = Number(p.preco);
-          const precoOutlet = precoOriginal * (1 - (DESCONTO_OUTLET / 100));
-          return `
-            <div class="outlet-card">
-              <div class="outlet-card-img">
-                <span class="outlet-desconto-badge">-${DESCONTO_OUTLET}%</span>
-                <img src="${p.imagem_url}" alt="${p.nome}">
-              </div>
-              <div class="outlet-card-body">
-                <p class="outlet-card-nome">${p.nome}</p>
-                <div class="outlet-precos">
-                  <span class="preco-original">${fmt(precoOriginal)}</span>
-                  <span class="preco-outlet">${fmt(precoOutlet)}</span>
-                </div>
-                <button class="btn-add-carrinho" style="width:100%; margin-top:10px" 
-                        onclick="adicionarAoCarrinho(${p.id}, '${p.nome}', ${precoOutlet}, '${p.imagem_url}', this)">
-                  + ADICIONAR
-                </button>
-              </div>
-            </div>`;
-        }).join('');
-      });
-  }
-
-  // 4. UNIDADES / LOJAS
-  const boxLojas = document.getElementById('boxLojas');
-  if (boxLojas) {
-    fetch(`${API}/unidades`).then(r => r.json()).then(lojas => {
-      const lista = lojas.map(l => `
-        <div class="card-loja"><h3>📍 ${l.cidade} — ${l.estado}</h3>
-        ${l.endereco ? `<p>${l.endereco}</p>` : ''}${l.telefone ? `<p>📞 ${l.telefone}</p>` : ''}</div>`).join('');
-      const titulo = boxLojas.querySelector('h2');
-      if (titulo) titulo.insertAdjacentHTML('afterend', lista);
+    fetch(`${API}/produtos?destaque=1`).then(r => r.json()).then(produtos => {
+      if (!produtos.length) return;
+      gridHome.innerHTML = produtos.map(p => `
+        <div class="card">
+          <img src="${p.imagem_url}" alt="${p.nome}">
+          <h3>${p.nome}</h3>
+          <p>${fmt(p.preco)}</p>
+          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho(${p.id}, '${p.nome}', ${p.preco}, '${p.imagem_url}', this)">
+            + ADICIONAR
+          </button>
+        </div>`).join('');
     });
   }
 
-  // Inicializa visual do carrinho
+  // 2. CARREGAR COLEÇÃO (PÁGINA COLEÇÃO)
+  const galeriaColecao = document.getElementById('galeria-colecao-exclusiva');
+  if (galeriaColecao) {
+    fetch(`${API}/produtos`).then(r => r.json()).then(produtos => {
+      galeriaColecao.innerHTML = produtos.map(p => `
+        <div class="card-produto">
+          <img src="${p.imagem_url}" alt="${p.nome}">
+          <h3>${p.nome}</h3>
+          <p class="preco">${fmt(p.preco)}</p>
+          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho(${p.id}, '${p.nome}', ${p.preco}, '${p.imagem_url}', this)">
+            + ADICIONAR
+          </button>
+        </div>`).join('');
+    });
+  }
+
   atualizarBadge();
   renderCarrinho();
 });
-
-// ── SISTEMA DE LOGIN / MODAL ────────────────
-window.abrirLogin = function (e) {
-  if (e) e.preventDefault();
-  document.getElementById('modalLoginOverlay')?.classList.add('aberto');
-};
-
-window.fecharLogin = function () {
-  document.getElementById('modalLoginOverlay')?.classList.remove('aberto');
-};
-
-window.fazerLogin = async function () {
-  const email = document.getElementById('loginEmail').value.trim();
-  const senha = document.getElementById('loginSenha').value;
-  const fb = document.getElementById('loginFeedback');
-  
-  try {
-    const res = await fetch(`${API}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, senha }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      usuarioLogado = data.cliente;
-      window.fecharLogin();
-      location.reload(); // Recarrega para aplicar estado de logado
-    } else {
-      fb.textContent = data.erro || 'Erro ao entrar.';
-    }
-  } catch (err) { fb.textContent = 'Erro de conexão.'; }
-};
-
-// ── FORMULÁRIO DE CONTATO ──────────────────
-const formContato = document.getElementById('formEcommerce');
-if (formContato) {
-  formContato.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const status = document.getElementById('resultadoValidacao');
-    const payload = {
-      nome: document.getElementById('nomeCliente').value,
-      assunto: document.getElementById('assunto').value,
-      mensagem: document.getElementById('mensagem').value
-    };
-    
-    status.innerText = 'Enviando...';
-    try {
-      const res = await fetch(`${API}/contato`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        status.innerText = 'Mensagem enviada com sucesso!';
-        formContato.reset();
-      } else { status.innerText = 'Erro ao enviar.'; }
-    } catch { status.innerText = 'Erro de conexão.'; }
-  });
-}
