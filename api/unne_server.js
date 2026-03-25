@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// ✅ CORREÇÃO: servidor está na raiz junto com os HTMLs
-app.use(express.static(path.join(__dirname, './')));
+// Servidor está em /api/, os HTMLs estão na raiz
+app.use(express.static(path.join(__dirname, '../')));
 
 // ------------------------------------------------------------
 // Conexão com o banco (TiDB Cloud via variáveis de ambiente)
@@ -40,7 +40,7 @@ pool.getConnection()
 // ROTA PRINCIPAL
 // ------------------------------------------------------------
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, '../', 'index.html'));
 });
 
 // ------------------------------------------------------------
