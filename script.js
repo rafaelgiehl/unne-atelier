@@ -1,8 +1,11 @@
 // ============================================================
-//  UNNE Atelier — script.js  (versão final completa)
+//  UNNE Atelier — script.js  (versão final completa para Render)
 // ============================================================
 
-const API = 'http://localhost:3000/api';
+// AJUSTE PARA DEPLOY: Se estiver no Render, usa o caminho relativo. Se estiver no PC, usa o localhost.
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000/api' 
+    : '/api';
 
 // ── MINHA CONTA — variáveis globais ─────────────────────
 let usuarioLogado = null;
@@ -110,8 +113,8 @@ function exibirPainel() {
   if (nomeHero)      nomeHero.textContent        = usuarioLogado.nome.split(' ')[0];
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-  set('pfNome',     usuarioLogado.nome);
-  set('pfEmail',    usuarioLogado.email);
+  set('pfNome',      usuarioLogado.nome);
+  set('pfEmail',     usuarioLogado.email);
   set('pfTelefone', usuarioLogado.telefone);
 
   carregarPedidos();
@@ -199,7 +202,7 @@ window.buscarCepP = async function (cep) {
 window.salvarDados = async function () {
   const nome     = document.getElementById('pfNome').value.trim();
   const telefone = document.getElementById('pfTelefone').value.trim();
-  const fb       = document.getElementById('dadosFeedback');
+  const fb        = document.getElementById('dadosFeedback');
   if (nome.length < 3) { fb.textContent = 'Nome inválido.'; fb.className = 'modal-feedback erro'; return; }
   try {
     const res = await fetch(`${API}/cliente/${usuarioLogado.id}`, {
@@ -280,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // CARROSSEL
   let bannerAtual = 0;
-  const imagensBanner = ['images/banner1.jpg','images/banner2.jpg','images/banner3.jpg'];
+  const imagensBanner = ['imagens/banner1.jpg','imagens/banner2.jpg','imagens/banner3.jpg'];
   function mudarBanner(direcao) {
     const img = document.getElementById('bannerImg');
     if (!img) return;
@@ -288,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
     img.style.opacity = 0;
     setTimeout(() => { img.src = imagensBanner[bannerAtual]; img.style.opacity = 1; }, 300);
   }
-  setInterval(() => mudarBanner(1), 5000);
+  // setInterval(() => mudarBanner(1), 5000); // Opcional: Ativar rotação automática
   window.mudarBanner = mudarBanner;
 
   // CUPOM
@@ -351,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.mudarCor = function (cor) {
     const img = document.getElementById('fotoBolsa');
     if (!img) return;
-    img.src = cor === 'preto' ? 'images/colecao3.jpg' : 'images/colecao4.jpg';
+    img.src = cor === 'preto' ? 'imagens/colecao3.jpg' : 'imagens/colecao4.jpg';
   };
 
   // ACESSIBILIDADE
@@ -726,11 +729,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res.ok) {
         cupomAtivo = data;
         msg.textContent = `✓ ${data.desconto}% OFF aplicado!`;
-        msg.className   = 'carr-cupom-msg ok';
+        msg.className    = 'carr-cupom-msg ok';
       } else {
         cupomAtivo = null;
         msg.textContent = data.erro || 'Cupom inválido.';
-        msg.className   = 'carr-cupom-msg erro';
+        msg.className    = 'carr-cupom-msg erro';
       }
       renderCarrinho();
     } catch {
@@ -741,78 +744,12 @@ document.addEventListener('DOMContentLoaded', () => {
   window.finalizarCompra = function () {
     if (!carrinho.length) return;
     const { total } = calcularTotais();
-    alert(`Obrigado pela compra! 🛍\nTotal: ${fmt(total)}\n\nFuncionalidade de pagamento em breve!`);
+    alert(`Obrigado pela compra! 🛍\nTotal: ${fmt(total)}`);
+    carrinho = [];
+    salvarCarrinho();
+    fecharCarrinho();
   };
 
-  // Atualiza galeria home com botão de adicionar
-  const gridHomeCar = document.querySelector('.grid-produtos');
-  if (gridHomeCar) {
-    const origFetch = gridHomeCar._fetchDone;
-    const observer  = new MutationObserver(() => {
-      gridHomeCar.querySelectorAll('.card').forEach(card => {
-        if (card.querySelector('.btn-add-carrinho')) return;
-        const nome   = card.querySelector('h3')?.textContent || '';
-        const preco  = card.querySelector('p')?.textContent?.replace(/[^\d,]/g,'').replace(',','.') || '0';
-        const imagem = card.querySelector('img')?.src || '';
-        const id     = Math.abs(nome.split('').reduce((a,c) => a + c.charCodeAt(0), 0));
-        const btn    = document.createElement('button');
-        btn.className       = 'btn-add-carrinho';
-        btn.dataset.id      = id;
-        btn.textContent     = '+ Adicionar';
-        btn.onclick         = () => adicionarAoCarrinho(id, nome, preco, imagem, btn);
-        card.appendChild(btn);
-      });
-      atualizarBotoesCards();
-    });
-    observer.observe(gridHomeCar, { childList: true });
-  }
-
-  // Atualiza galeria coleção com botão de adicionar
-  const galColecaoCar = document.getElementById('galeria-colecao-exclusiva');
-  if (galColecaoCar) {
-    const observer2 = new MutationObserver(() => {
-      galColecaoCar.querySelectorAll('.card-produto').forEach(card => {
-        if (card.querySelector('.btn-add-carrinho')) return;
-        const nome   = card.querySelector('h3')?.textContent || '';
-        const preco  = card.querySelector('.preco')?.textContent?.replace(/[^\d,]/g,'').replace(',','.') || '0';
-        const imagem = card.querySelector('img')?.src || '';
-        const id     = Math.abs(nome.split('').reduce((a,c) => a + c.charCodeAt(0), 0));
-        const btn    = document.createElement('button');
-        btn.className       = 'btn-add-carrinho';
-        btn.dataset.id      = id;
-        btn.textContent     = '+ Adicionar';
-        btn.onclick         = () => adicionarAoCarrinho(id, nome, preco, imagem, btn);
-        card.appendChild(btn);
-      });
-      atualizarBotoesCards();
-    });
-    observer2.observe(galColecaoCar, { childList: true });
-  }
-
-  // Outlet cards
-  const galOutletCar = document.getElementById('galeriaOutlet');
-  if (galOutletCar) {
-    const observer3 = new MutationObserver(() => {
-      galOutletCar.querySelectorAll('.outlet-card').forEach(card => {
-        if (card.querySelector('.btn-add-carrinho')) return;
-        const nome   = card.querySelector('.outlet-card-nome')?.textContent || '';
-        const preco  = card.querySelector('.preco-outlet')?.textContent?.replace(/[^\d,]/g,'').replace(',','.') || '0';
-        const imagem = card.querySelector('img')?.src || '';
-        const id     = Math.abs(nome.split('').reduce((a,c) => a + c.charCodeAt(0), 0)) + 1000;
-        const btn    = document.createElement('button');
-        btn.className       = 'btn-add-carrinho';
-        btn.dataset.id      = id;
-        btn.textContent     = '+ Adicionar';
-        btn.style.marginTop = '10px';
-        btn.onclick         = () => adicionarAoCarrinho(id, nome, preco, imagem, btn);
-        card.querySelector('.outlet-card-body')?.appendChild(btn);
-      });
-      atualizarBotoesCards();
-    });
-    observer3.observe(galOutletCar, { childList: true });
-  }
-
+  // Inicializa estado
   atualizarBadge();
-  renderCarrinho();
-
 });
