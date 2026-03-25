@@ -1,4 +1,11 @@
 {
+  "name": "unne-atelier",
+  "version": "1.0.0",
+  "description": "UNNE Atelier Couro & Estilo — Projeto Interdisciplinar",
+  "main": "unne_server.js",
+  "scripts": {
+    "start": "node unne_server.js"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
