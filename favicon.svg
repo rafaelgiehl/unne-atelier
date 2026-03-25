@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- fundo -->
+  <rect width="32" height="32" rx="8" fill="#3d2b1f"/>
+  <!-- alça -->
+  <path d="M11 13 Q11 8 16 8 Q21 8 21 13" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>
+  <!-- corpo da bolsa -->
+  <rect x="7" y="13" width="18" height="13" rx="3" fill="#d4af37"/>
+  <!-- detalhe fecho -->
+  <rect x="13" y="17" width="6" height="3" rx="1.5" fill="#3d2b1f"/>
+</svg>

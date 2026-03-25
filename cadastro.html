@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro — UNNE Atelier Couro & Estilo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="produtos.html">Coleção</a></li>
+            <li><a href="outlet.html">Outlet</a></li>
+            <li><a href="contato.html">Atendimento</a></li>
+            <li><a href="cadastro.html">Cadastro</a></li>
+            <li><a href="minha-conta.html" id="navLogin">Entrar</a></li>
+            <li>
+                <a href="#" onclick="event.preventDefault();abrirCarrinho()" class="nav-carrinho">
+                    🛍 Carrinho
+                    <span class="nav-carrinho-count" id="navCarrinhoCount">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main style="padding:0; background:transparent; box-shadow:none; width:100%; max-width:100%;">
+        <div class="cad-wrapper">
+            <div class="cad-hero">
+                <p class="cad-hero-label">UNNE Atelier Couro &amp; Estilo</p>
+                <h2>Crie sua <em>conta</em></h2>
+                <p>Acesse ofertas exclusivas e acompanhe seus pedidos.</p>
+            </div>
+            <div class="cad-body">
+                <div class="cad-card">
+                    <div class="etapas">
+                        <div class="etapa ativa" id="etapa1"><div class="etapa-num">1</div><span class="etapa-nome">Dados pessoais</span></div>
+                        <div class="etapa-linha"></div>
+                        <div class="etapa" id="etapa2"><div class="etapa-num">2</div><span class="etapa-nome">Endereço</span></div>
+                        <div class="etapa-linha"></div>
+                        <div class="etapa" id="etapa3"><div class="etapa-num">3</div><span class="etapa-nome">Acesso</span></div>
+                    </div>
+                    <form id="formCadastro" novalidate>
+                        <div class="cad-secao visivel" id="secao1">
+                            <p class="secao-titulo">Dados pessoais</p>
+                            <p class="secao-sub">Precisamos de algumas informações básicas sobre você.</p>
+                            <div class="campo-grupo">
+                                <div class="campo full">
+                                    <label for="cadNome">Nome completo</label>
+                                    <input type="text" id="cadNome" placeholder="Seu nome completo" autocomplete="name">
+                                    <span class="campo-erro" id="erroNome"></span>
+                                </div>
+                                <div class="campo">
+                                    <label for="cadEmail">E-mail</label>
+                                    <input type="email" id="cadEmail" placeholder="seu@email.com" autocomplete="email">
+                                    <span class="campo-erro" id="erroEmail"></span>
+                                </div>
+                                <div class="campo">
+                                    <label for="cadTelefone">Telefone</label>
+                                    <input type="tel" id="cadTelefone" placeholder="(00) 00000-0000" autocomplete="tel" maxlength="15">
+                                    <span class="campo-erro" id="erroTelefone"></span>
+                                </div>
+                            </div>
+                            <div class="cad-acoes">
+                                <button type="button" class="btn-proximo" onclick="irParaEtapa(2)">Próximo</button>
+                            </div>
+                        </div>
+                        <div class="cad-secao" id="secao2">
+                            <p class="secao-titulo">Endereço de entrega</p>
+                            <p class="secao-sub">Informe onde seus pedidos devem ser entregues.</p>
+                            <div class="campo-grupo">
+                                <div class="campo">
+                                    <label for="cadCep">CEP</label>
+                                    <input type="text" id="cadCep" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscarCep(this.value)">
+                                    <span class="campo-erro" id="erroCep"></span>
+                                </div>
+                                <div class="campo">
+                                    <label for="cadEstado">Estado</label>
+                                    <div class="select-wrap">
+                                        <select id="cadEstado">
+                                            <option value="">Selecione...</option>
+                                            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                                            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                                            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                                            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                                            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                                            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                                            <option>SP</option><option>SE</option><option>TO</option>
+                                        </select>
+                                    </div>
+                                    <span class="campo-erro" id="erroEstado"></span>
+                                </div>
+                                <div class="campo full"><label for="cadCidade">Cidade</label><input type="text" id="cadCidade" placeholder="Sua cidade"><span class="campo-erro" id="erroCidade"></span></div>
+                                <div class="campo full"><label for="cadRua">Rua / Avenida</label><input type="text" id="cadRua" placeholder="Nome da rua"><span class="campo-erro" id="erroRua"></span></div>
+                                <div class="campo"><label for="cadNumero">Número</label><input type="text" id="cadNumero" placeholder="Nº"><span class="campo-erro" id="erroNumero"></span></div>
+                                <div class="campo"><label for="cadComp">Complemento <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label><input type="text" id="cadComp" placeholder="Apto, bloco..."></div>
+                            </div>
+                            <div class="cad-acoes">
+                                <button type="button" class="btn-voltar" onclick="irParaEtapa(1)">Voltar</button>
+                                <button type="button" class="btn-proximo" onclick="irParaEtapa(3)">Próximo</button>
+                            </div>
+                        </div>
+                        <div class="cad-secao" id="secao3">
+                            <p class="secao-titulo">Dados de acesso</p>
+                            <p class="secao-sub">Crie uma senha segura para proteger sua conta.</p>
+                            <div class="campo-grupo">
+                                <div class="campo full">
+                                    <label for="cadSenha">Senha</label>
+                                    <div class="campo-senha">
+                                        <input type="password" id="cadSenha" placeholder="Mínimo 8 caracteres" oninput="avaliarSenha(this.value)">
+                                        <button type="button" class="toggle-senha" onclick="toggleSenha('cadSenha', this)">👁</button>
+                                    </div>
+                                    <div class="forca-wrap">
+                                        <div class="forca-barras">
+                                            <div class="forca-barra" id="b1"></div><div class="forca-barra" id="b2"></div>
+                                            <div class="forca-barra" id="b3"></div><div class="forca-barra" id="b4"></div>
+                                        </div>
+                                        <span class="forca-label" id="forcaLabel">Digite uma senha</span>
+                                    </div>
+                                    <span class="campo-erro" id="erroSenha"></span>
+                                </div>
+                                <div class="campo full">
+                                    <label for="cadSenha2">Confirmar senha</label>
+                                    <div class="campo-senha">
+                                        <input type="password" id="cadSenha2" placeholder="Repita a senha">
+                                        <button type="button" class="toggle-senha" onclick="toggleSenha('cadSenha2', this)">👁</button>
+                                    </div>
+                                    <span class="campo-erro" id="erroSenha2"></span>
+                                </div>
+                            </div>
+                            <div class="cad-acoes">
+                                <button type="button" class="btn-voltar" onclick="irParaEtapa(2)">Voltar</button>
+                                <button type="submit" class="btn-cadastrar" id="btnCadastrar">Criar conta</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="cad-sucesso" id="cadSucesso">
+                        <div class="sucesso-icone">✓</div>
+                        <p class="sucesso-titulo">Bem-vinda à <em>UNNE</em></p>
+                        <p class="sucesso-sub">Sua conta foi criada com sucesso!<br>Agora você pode acompanhar pedidos e acessar ofertas exclusivas.</p>
+                        <a href="index.html" class="btn-home">Ir para a loja</a>
+                    </div>
+                    <p class="cad-login-link" id="linkLogin">Já tem uma conta? <a href="minha-conta.html">Faça login</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Polo:</strong> Picada Café</p>
+            <p><strong>Integrantes:</strong> Aloysio Bischoff, Matheus Scherer, Rafael Vinícius Giehl</p>
+            <p>&copy; 2026 — UNNE Projeto Interdisciplinar de Desenvolvimento Web</p>
+        </div>
+        <div class="acessibilidade-footer">
+            <button onclick="toggleAcessibilidade()">Acessibilidade ♿</button>
+            <div id="painelAcessibilidade" class="painel-acessibilidade">
+                <button onclick="estiloAcessivel('escuro')">Modo Escuro</button>
+                <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+                <button onclick="estiloAcessivel('fonte')">Aumentar Fonte</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CARRINHO -->
+    <div class="carrinho-overlay" id="carrinhoOverlay" onclick="fecharCarrinho()"></div>
+    <div class="carrinho-drawer" id="carrinhoDrawer">
+        <div class="carr-header"><div class="carr-titulo">🛍 Meu Carrinho<span class="carr-badge" id="carrBadgeHeader">0</span></div><button class="carr-fechar" onclick="fecharCarrinho()">✕</button></div>
+        <div class="carr-cupom"><input type="text" id="inputCupomCarr" placeholder="Código de cupom" maxlength="20" onkeydown="if(event.key==='Enter') aplicarCupomCarr()"><button class="btn-cupom-carr" onclick="aplicarCupomCarr()">Aplicar</button></div>
+        <p class="carr-cupom-msg" id="cupomMsg"></p>
+        <div class="carr-itens" id="carrItens"><div class="carr-vazio"><span class="carr-vazio-icone">🛍</span><p>Seu carrinho está vazio</p></div></div>
+        <div class="carr-footer" id="carrFooter" style="display:none">
+            <div class="carr-linha"><span>Subtotal</span><span id="carrSubtotal">R$ 0,00</span></div>
+            <div class="carr-linha desconto" id="carrLinhaDesconto" style="display:none"><span id="carrDescontoLabel">Cupom</span><span id="carrDescontoValor">− R$ 0,00</span></div>
+            <div class="carr-total"><span>Total</span><span class="carr-total-valor" id="carrTotal">R$ 0,00</span></div>
+            <button class="btn-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atendimento — UNNE Atelier Couro & Estilo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="produtos.html">Coleção</a></li>
+            <li><a href="outlet.html">Outlet</a></li>
+            <li><a href="contato.html">Atendimento</a></li>
+            <li><a href="cadastro.html">Cadastro</a></li>
+            <li><a href="minha-conta.html" id="navLogin">Entrar</a></li>
+            <li>
+                <a href="#" onclick="event.preventDefault();abrirCarrinho()" class="nav-carrinho">
+                    🛍 Carrinho
+                    <span class="nav-carrinho-count" id="navCarrinhoCount">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main style="padding:0; background:transparent; box-shadow:none; width:100%; max-width:100%;">
+        <div class="contato-wrapper">
+            <div class="contato-hero">
+                <p class="contato-hero-label">UNNE Atelier Couro &amp; Estilo</p>
+                <h2>Fale com <em>nossa equipe</em></h2>
+                <p>Respondemos em até 1 dia útil. Será um prazer atendê-lo.</p>
+            </div>
+            <div class="contato-body">
+                <div class="contato-info">
+                    <div class="info-bloco">
+                        <p class="info-bloco-titulo">Nossas Unidades</p>
+                        <p><strong>Picada Café — RS</strong><br>Rua Principal, 100<br>📞 (54) 99999-0001</p>
+                    </div>
+                    <div class="info-divider"></div>
+                    <div class="info-bloco">
+                        <p class="info-bloco-titulo"></p>
+                        <p><strong>Nova Petrópolis — RS</strong><br>Av. XV de Novembro, 250<br>📞 (54) 99999-0002</p>
+                    </div>
+                    <div class="info-divider"></div>
+                    <div class="info-bloco">
+                        <p class="info-bloco-titulo">Horário de Atendimento</p>
+                        <div class="info-horario">
+                            <div class="info-horario-linha"><span>Segunda — Sexta</span><span>9h – 18h</span></div>
+                            <div class="info-horario-linha"><span>Sábado</span><span>9h – 13h</span></div>
+                            <div class="info-horario-linha"><span>Domingo</span><span>Fechado</span></div>
+                        </div>
+                    </div>
+                    <div class="info-divider"></div>
+                    <div class="info-bloco">
+                        <p class="info-bloco-titulo">E-mail</p>
+                        <p>contato@unneatelier.com.br</p>
+                        <span class="info-badge">Couro Legítimo Certificado</span>
+                    </div>
+                </div>
+                <div class="contato-form-area">
+                    <p class="form-titulo">Envie sua mensagem</p>
+                    <p class="form-subtitulo">Preencha os campos abaixo e entraremos em contato.</p>
+                    <form id="formEcommerce" novalidate>
+                        <div class="campo-grupo">
+                            <div class="campo">
+                                <label for="nomeCliente">Seu nome</label>
+                                <input type="text" id="nomeCliente" placeholder="Mínimo 3 caracteres" autocomplete="name">
+                            </div>
+                            <div class="campo">
+                                <label for="emailCliente">E-mail</label>
+                                <input type="email" id="emailCliente" placeholder="seu@email.com" autocomplete="email">
+                            </div>
+                        </div>
+                        <div class="campo" style="margin-bottom:20px;">
+                            <label>Assunto</label>
+                            <div class="assunto-chips">
+                                <span class="chip" data-val="venda"    onclick="selecionarChip(this)">Quero ser revendedor</span>
+                                <span class="chip" data-val="sac"      onclick="selecionarChip(this)">Dúvida sobre produto</span>
+                                <span class="chip" data-val="pedido"   onclick="selecionarChip(this)">Acompanhar pedido</span>
+                                <span class="chip" data-val="parceria" onclick="selecionarChip(this)">Parceria</span>
+                                <span class="chip" data-val="outro"    onclick="selecionarChip(this)">Outro</span>
+                            </div>
+                            <input type="hidden" id="assuntoHidden">
+                        </div>
+                        <div class="campo full" style="margin-bottom:0;">
+                            <label for="mensagem">Mensagem</label>
+                            <textarea id="mensagem" placeholder="Descreva sua dúvida ou proposta com detalhes..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-enviar">Enviar Mensagem</button>
+                        <p id="resultadoValidacao"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Polo:</strong> Picada Café</p>
+            <p><strong>Integrantes:</strong> Aloysio Bischoff, Matheus Scherer, Rafael Vinícius Giehl</p>
+            <p>&copy; 2026 — UNNE Projeto Interdisciplinar de Desenvolvimento Web</p>
+        </div>
+        <div class="acessibilidade-footer">
+            <button onclick="toggleAcessibilidade()">Acessibilidade ♿</button>
+            <div id="painelAcessibilidade" class="painel-acessibilidade">
+                <button onclick="estiloAcessivel('escuro')">Modo Escuro</button>
+                <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+                <button onclick="estiloAcessivel('fonte')">Aumentar Fonte</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CARRINHO -->
+    <div class="carrinho-overlay" id="carrinhoOverlay" onclick="fecharCarrinho()"></div>
+    <div class="carrinho-drawer" id="carrinhoDrawer">
+        <div class="carr-header"><div class="carr-titulo">🛍 Meu Carrinho<span class="carr-badge" id="carrBadgeHeader">0</span></div><button class="carr-fechar" onclick="fecharCarrinho()">✕</button></div>
+        <div class="carr-cupom"><input type="text" id="inputCupomCarr" placeholder="Código de cupom" maxlength="20" onkeydown="if(event.key==='Enter') aplicarCupomCarr()"><button class="btn-cupom-carr" onclick="aplicarCupomCarr()">Aplicar</button></div>
+        <p class="carr-cupom-msg" id="cupomMsg"></p>
+        <div class="carr-itens" id="carrItens"><div class="carr-vazio"><span class="carr-vazio-icone">🛍</span><p>Seu carrinho está vazio</p></div></div>
+        <div class="carr-footer" id="carrFooter" style="display:none">
+            <div class="carr-linha"><span>Subtotal</span><span id="carrSubtotal">R$ 0,00</span></div>
+            <div class="carr-linha desconto" id="carrLinhaDesconto" style="display:none"><span id="carrDescontoLabel">Cupom</span><span id="carrDescontoValor">− R$ 0,00</span></div>
+            <div class="carr-total"><span>Total</span><span class="carr-total-valor" id="carrTotal">R$ 0,00</span></div>
+            <button class="btn-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function selecionarChip(el) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('ativo'));
+            el.classList.add('ativo');
+            document.getElementById('assuntoHidden').value = el.dataset.val;
+        }
+        /* document.getElementById('formEcommerce').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nome    = document.getElementById('nomeCliente').value.trim();
+            const email   = document.getElementById('emailCliente').value.trim();
+            const assunto = document.getElementById('assuntoHidden').value;
+            const msg     = document.getElementById('mensagem').value.trim();
+            const status  = document.getElementById('resultadoValidacao');
+            const btn     = document.querySelector('.btn-enviar');
+            status.className = '';
+            if (nome.length < 3)  { status.textContent = 'Por favor, informe seu nome completo.'; status.className = 'erro'; return; }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { status.textContent = 'Informe um e-mail válido.'; status.className = 'erro'; return; }
+            if (!assunto) { status.textContent = 'Selecione um assunto.'; status.className = 'erro'; return; }
+            if (msg.length < 10) { status.textContent = 'A mensagem deve ter pelo menos 10 caracteres.'; status.className = 'erro'; return; }
+            btn.disabled = true; btn.textContent = 'Enviando...';
+            try {
+                const res  = await fetch('http://localhost:3000/api/contato', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nome, email, assunto, mensagem: msg }) });
+                const data = await res.json();
+                if (res.ok) { status.textContent = '✓ Mensagem enviada! Retornaremos em breve.'; status.className = 'sucesso'; this.reset(); document.querySelectorAll('.chip').forEach(c => c.classList.remove('ativo')); }
+                else { status.textContent = data.erro || 'Erro ao enviar.'; status.className = 'erro'; }
+            } catch { status.textContent = '✓ Mensagem recebida! (modo offline)'; status.className = 'sucesso'; this.reset(); document.querySelectorAll('.chip').forEach(c => c.classList.remove('ativo')); }
+            finally { btn.disabled = false; btn.textContent = 'Enviar Mensagem'; }
+        }, true);*/
+    </script>
+</body>
+</html>

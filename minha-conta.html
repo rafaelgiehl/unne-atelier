@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Conta — UNNE Atelier</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+:root {
+  --marrom:  #3d2b1f;
+  --marrom2: #2a1e15;
+  --dourado: #d4af37;
+  --creme:   #faf7f2;
+  --creme2:  #f0ebe0;
+  --cinza:   #888075;
+  --borda:   #e0d5c5;
+  --ok:      #4a7c59;
+  --erro:    #a83232;
+}
+
+/* ── MODAL OVERLAY ──────────────────────────────────────── */
+.modal-login-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(42,30,21,0.7);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.modal-login-overlay.aberto { display: flex; }
+
+.modal-login {
+  background: #fff;
+  width: 100%;
+  max-width: 420px;
+  border-top: 3px solid var(--dourado);
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-login-fechar {
+  position: absolute;
+  top: 14px; right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--cinza);
+  line-height: 1;
+  padding: 4px;
+}
+
+.modal-login-fechar:hover { color: var(--marrom); }
+
+/* ── ABAS LOGIN/CADASTRO ────────────────────────────────── */
+.modal-abas {
+  display: flex;
+  border-bottom: 1px solid var(--borda);
+}
+
+.modal-aba {
+  flex: 1;
+  padding: 16px;
+  text-align: center;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.modal-aba.ativa {
+  color: var(--marrom);
+  border-bottom-color: var(--dourado);
+}
+
+.modal-login-body { padding: 28px 32px 32px; }
+
+/* ── LOGO MODAL ─────────────────────────────────────────── */
+.modal-login-logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.modal-login-logo h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--marrom);
+}
+
+.modal-login-logo h2 em { font-style: italic; color: var(--dourado); }
+
+.modal-login-logo p {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--cinza);
+  margin-top: 4px;
+}
+
+/* ── CAMPOS ─────────────────────────────────────────────── */
+.ml-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ml-campo label {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.63rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--marrom);
+}
+
+.ml-campo input {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--marrom);
+  background: var(--creme);
+  border: 1px solid var(--borda);
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.ml-campo input:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+}
+
+.ml-campo input.invalido { border-color: var(--erro); }
+
+.ml-erro {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  color: var(--erro);
+  min-height: 16px;
+}
+
+/* ── BOTÃO ──────────────────────────────────────────────── */
+.btn-modal-login {
+  width: 100%;
+  margin-top: 6px;
+  padding: 13px;
+  background: var(--marrom);
+  color: var(--dourado);
+  border: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, letter-spacing 0.2s;
+}
+
+.btn-modal-login:hover { background: var(--marrom2); letter-spacing: 0.36em; }
+.btn-modal-login:disabled { opacity: 0.6; cursor: default; letter-spacing: 0.28em; }
+
+.modal-feedback {
+  margin-top: 12px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  text-align: center;
+  min-height: 18px;
+}
+
+.modal-feedback.ok   { color: var(--ok); }
+.modal-feedback.erro { color: var(--erro); }
+
+/* ── SEÇÕES DAS ABAS ────────────────────────────────────── */
+.modal-secao { display: none; }
+.modal-secao.visivel { display: block; }
+
+/* ── PAINEL DO USUÁRIO ──────────────────────────────────── */
+.usuario-hero {
+  background: var(--marrom);
+  padding: 48px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.usuario-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 40px,
+    rgba(212,175,55,0.04) 40px, rgba(212,175,55,0.04) 41px
+  );
+}
+
+.usuario-hero-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.usuario-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(212,175,55,0.15);
+  border: 2px solid rgba(212,175,55,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.usuario-boas-vindas p {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(212,175,55,0.6);
+  margin-bottom: 4px;
+}
+
+.usuario-boas-vindas h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: #fff;
+}
+
+.usuario-boas-vindas h2 em { font-style: italic; color: var(--dourado); }
+
+/* ── ABAS DO PAINEL ─────────────────────────────────────── */
+.painel-abas {
+  background: #fff;
+  border-bottom: 1px solid var(--borda);
+  display: flex;
+  overflow-x: auto;
+}
+
+.painel-aba {
+  padding: 14px 24px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.painel-aba:hover { color: var(--marrom); }
+.painel-aba.ativa { color: var(--marrom); border-bottom-color: var(--dourado); }
+
+/* ── CONTEÚDO DO PAINEL ─────────────────────────────────── */
+.painel-body {
+  width: 90%;
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 0 48px;
+}
+
+.painel-secao { display: none; }
+.painel-secao.visivel { display: block; }
+
+/* ── CARD ───────────────────────────────────────────────── */
+.p-card {
+  background: #fff;
+  border: 1px solid var(--borda);
+  margin-bottom: 20px;
+}
+
+.p-card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--borda);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.p-card-titulo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--marrom);
+}
+
+.p-card-body { padding: 24px; }
+
+/* ── PEDIDOS ────────────────────────────────────────────── */
+.pedido-item {
+  border: 1px solid var(--borda);
+  border-left: 3px solid var(--dourado);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pedido-info h4 {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--marrom);
+  margin-bottom: 4px;
+}
+
+.pedido-info p {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: var(--cinza);
+}
+
+.pedido-valor {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--marrom);
+}
+
+.badge-status {
+  display: inline-block;
+  padding: 4px 12px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.bs-aguardando { background: #fef3e2; color: #b8760a; }
+.bs-pago       { background: #e3f0f9; color: #1e5f8a; }
+.bs-enviado    { background: #e8f4ec; color: #4a7c59; }
+.bs-entregue   { background: #e8f4ec; color: #4a7c59; }
+.bs-cancelado  { background: #faeaea; color: #a83232; }
+.bs-separacao  { background: #e3f0f9; color: #1e5f8a; }
+
+/* ── FORMULÁRIO PERFIL ──────────────────────────────────── */
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pf-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pf-campo.full { grid-column: 1 / -1; }
+
+.pf-campo label {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.63rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--marrom);
+}
+
+.pf-campo input {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--marrom);
+  background: var(--creme);
+  border: 1px solid var(--borda);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pf-campo input:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+}
+
+.pf-campo input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── BOTÕES PAINEL ──────────────────────────────────────── */
+.btn-painel {
+  padding: 11px 24px;
+  background: var(--marrom);
+  color: var(--dourado);
+  border: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-painel:hover { background: var(--marrom2); }
+
+.btn-painel-sec {
+  padding: 11px 24px;
+  background: transparent;
+  color: var(--marrom);
+  border: 1px solid var(--borda);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-painel-sec:hover { border-color: var(--marrom); }
+
+.painel-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ── ENDEREÇO ───────────────────────────────────────────── */
+.endereco-card {
+  border: 1px solid var(--borda);
+  border-left: 3px solid var(--dourado);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.endereco-card h4 {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--marrom);
+  margin-bottom: 6px;
+}
+
+.endereco-card p {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--cinza);
+  line-height: 1.7;
+}
+
+/* ── VAZIO ──────────────────────────────────────────────── */
+.estado-vazio-p {
+  text-align: center;
+  padding: 36px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--cinza);
+}
+
+/* ── FORÇA SENHA ────────────────────────────────────────── */
+.forca-barras {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.forca-barra {
+  flex: 1;
+  height: 3px;
+  background: var(--borda);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.forca-barra.f1 { background: #c0392b; }
+.forca-barra.f2 { background: #e67e22; }
+.forca-barra.f3 { background: #f1c40f; }
+.forca-barra.f4 { background: var(--ok); }
+
+/* ── TOAST ──────────────────────────────────────────────── */
+.toast-u {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  padding: 13px 20px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.82rem;
+  z-index: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.toast-u.visivel { opacity: 1; transform: translateY(0); }
+.toast-u.ok   { background: var(--ok); color: #fff; }
+.toast-u.erro { background: var(--erro); color: #fff; }
+
+/* ── RESPONSIVO ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .perfil-grid { grid-template-columns: 1fr; }
+  .usuario-hero { padding: 32px 20px; }
+  .modal-login-body { padding: 24px 20px 28px; }
+}
+
+/* ── MODO ESCURO ────────────────────────────────────────── */
+body.modo-escuro .modal-login,
+body.modo-escuro .p-card { background: #242424; }
+body.modo-escuro .ml-campo input,
+body.modo-escuro .pf-campo input { background: #2e2e2e; border-color: #3a3a3a; color: #e0d5c5; }
+body.modo-escuro .painel-abas { background: #1e1e1e; }
+body.modo-escuro .pedido-item,
+body.modo-escuro .endereco-card { background: #1e1e1e; border-color: #333; }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ════════════════════════════════════════════════ -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="produtos.html">Coleção</a></li>
+      <li><a href="outlet.html">Outlet</a></li>
+      <li><a href="contato.html">Atendimento</a></li>
+      <li><a href="cadastro.html">Cadastro</a></li>
+      <li><a href="#" onclick="event.preventDefault();document.getElementById('modalLoginOverlay').classList.add('aberto')" id="navLogin">Entrar</a></li>
+      <li>
+        <a href="#" onclick="event.preventDefault();abrirCarrinho()" class="nav-carrinho">
+          🛍 Carrinho
+          <span class="nav-carrinho-count" id="navCarrinhoCount">0</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+<!-- ══ MODAL LOGIN ════════════════════════════════════════ -->
+<div class="modal-login-overlay" id="modalLoginOverlay" onclick="fecharLoginFora(event)">
+  <div class="modal-login">
+    <button class="modal-login-fechar" onclick="fecharLogin()">✕</button>
+
+    <div class="modal-abas">
+      <div class="modal-aba ativa" onclick="trocarAba('login', this)">Entrar</div>
+      <div class="modal-aba" onclick="trocarAba('registrar', this)">Criar conta</div>
+    </div>
+
+    <div class="modal-login-body">
+      <div class="modal-login-logo">
+        <h2>UNNE <em>Atelier</em></h2>
+        <p>Acesse sua conta</p>
+      </div>
+
+      <!-- Aba Login -->
+      <div class="modal-secao visivel" id="abaLogin">
+        <div class="ml-campo">
+          <label>E-mail</label>
+          <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="ml-campo">
+          <label>Senha</label>
+          <input type="password" id="loginSenha" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter') fazerLogin()">
+        </div>
+        <button class="btn-modal-login" id="btnLogin" onclick="fazerLogin()">Entrar</button>
+        <p class="modal-feedback" id="loginFeedback"></p>
+      </div>
+
+      <!-- Aba Registrar (redireciona para cadastro) -->
+      <div class="modal-secao" id="abaRegistrar">
+        <p style="font-family:'Jost',sans-serif;font-size:.85rem;font-weight:300;color:var(--cinza);text-align:center;line-height:1.7;margin-bottom:20px">
+          Para criar sua conta acesse nossa página de cadastro completa.
+        </p>
+        <a href="cadastro.html" class="btn-modal-login" style="display:block;text-align:center;text-decoration:none;padding:13px">
+          Ir para o Cadastro
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAINEL DO USUÁRIO ══════════════════════════════════ -->
+<div id="painelUsuario" style="display:none">
+
+  <!-- Hero -->
+  <div class="usuario-hero">
+    <div class="usuario-hero-inner">
+      <div class="usuario-avatar">👤</div>
+      <div class="usuario-boas-vindas">
+        <p>Bem-vindo de volta</p>
+        <h2><em id="nomeUsuarioHero">—</em></h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abas -->
+  <div class="painel-abas">
+    <div class="painel-aba ativa" onclick="irParaAba('pedidos', this)">Meus Pedidos</div>
+    <div class="painel-aba" onclick="irParaAba('dados', this)">Meus Dados</div>
+    <div class="painel-aba" onclick="irParaAba('endereco', this)">Endereço</div>
+    <div class="painel-aba" onclick="irParaAba('senha', this)">Alterar Senha</div>
+    <div class="painel-aba" onclick="fazerLogout()"
+      style="margin-left:auto;color:var(--erro)">Sair</div>
+  </div>
+
+  <div class="painel-body">
+
+    <!-- Pedidos -->
+    <div class="painel-secao visivel" id="sec-pedidos">
+      <div class="p-card">
+        <div class="p-card-header">
+          <span class="p-card-titulo">Meus Pedidos</span>
+        </div>
+        <div class="p-card-body" id="listaPedidos">
+          <p class="estado-vazio-p">Carregando pedidos...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dados -->
+    <div class="painel-secao" id="sec-dados">
+      <div class="p-card">
+        <div class="p-card-header">
+          <span class="p-card-titulo">Meus Dados</span>
+        </div>
+        <div class="p-card-body">
+          <div class="perfil-grid">
+            <div class="pf-campo full">
+              <label>Nome completo</label>
+              <input type="text" id="pfNome" placeholder="Seu nome">
+            </div>
+            <div class="pf-campo">
+              <label>E-mail</label>
+              <input type="email" id="pfEmail" disabled>
+            </div>
+            <div class="pf-campo">
+              <label>Telefone</label>
+              <input type="tel" id="pfTelefone" placeholder="(00) 00000-0000">
+            </div>
+          </div>
+          <div class="painel-acoes">
+            <button class="btn-painel" onclick="salvarDados()">Salvar alterações</button>
+          </div>
+          <p class="modal-feedback" id="dadosFeedback" style="text-align:left;margin-top:8px"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endereço -->
+    <div class="painel-secao" id="sec-endereco">
+      <div class="p-card">
+        <div class="p-card-header">
+          <span class="p-card-titulo">Meu Endereço</span>
+        </div>
+        <div class="p-card-body">
+          <div class="perfil-grid">
+            <div class="pf-campo">
+              <label>CEP</label>
+              <input type="text" id="pfCep" placeholder="00000-000" maxlength="9"
+                oninput="mascaraCepP(this)" onblur="buscarCepP(this.value)">
+            </div>
+            <div class="pf-campo">
+              <label>Estado</label>
+              <input type="text" id="pfEstado" placeholder="UF" maxlength="2">
+            </div>
+            <div class="pf-campo full">
+              <label>Cidade</label>
+              <input type="text" id="pfCidade" placeholder="Sua cidade">
+            </div>
+            <div class="pf-campo full">
+              <label>Rua</label>
+              <input type="text" id="pfRua" placeholder="Nome da rua">
+            </div>
+            <div class="pf-campo">
+              <label>Número</label>
+              <input type="text" id="pfNumero" placeholder="Nº">
+            </div>
+            <div class="pf-campo">
+              <label>Complemento <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label>
+              <input type="text" id="pfComp" placeholder="Apto, bloco...">
+            </div>
+          </div>
+          <div class="painel-acoes">
+            <button class="btn-painel" onclick="salvarEndereco()">Salvar endereço</button>
+          </div>
+          <p class="modal-feedback" id="endFeedback" style="text-align:left;margin-top:8px"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Senha -->
+    <div class="painel-secao" id="sec-senha">
+      <div class="p-card">
+        <div class="p-card-header">
+          <span class="p-card-titulo">Alterar Senha</span>
+        </div>
+        <div class="p-card-body">
+          <div class="perfil-grid">
+            <div class="pf-campo full">
+              <label>Senha atual</label>
+              <input type="password" id="senhaAtual" placeholder="••••••••">
+            </div>
+            <div class="pf-campo full">
+              <label>Nova senha</label>
+              <input type="password" id="senhaNova" placeholder="Mínimo 8 caracteres"
+                oninput="avaliarForca(this.value)">
+              <div class="forca-barras">
+                <div class="forca-barra" id="fb1"></div>
+                <div class="forca-barra" id="fb2"></div>
+                <div class="forca-barra" id="fb3"></div>
+                <div class="forca-barra" id="fb4"></div>
+              </div>
+            </div>
+            <div class="pf-campo full">
+              <label>Confirmar nova senha</label>
+              <input type="password" id="senhaConf" placeholder="Repita a nova senha">
+            </div>
+          </div>
+          <div class="painel-acoes">
+            <button class="btn-painel" onclick="alterarSenha()">Alterar senha</button>
+          </div>
+          <p class="modal-feedback" id="senhaFeedback" style="text-align:left;margin-top:8px"></p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /painel-body -->
+</div><!-- /painelUsuario -->
+
+<!-- Tela inicial (quando não logado) -->
+<div id="telaInicial">
+  <header><h1>UNNE Atelier Couro &amp; Estilo</h1></header>
+  <main style="text-align:center;padding:60px 20px">
+    <p style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:300;color:var(--cinza);margin-bottom:24px">
+      Faça login para acessar sua conta e acompanhar seus pedidos.
+    </p>
+    <button class="btn-painel" onclick="document.getElementById('modalLoginOverlay').classList.add('aberto')">Entrar na minha conta</button>
+  </main>
+</div>
+
+<footer>
+  <div class="footer-content">
+    <p><strong>Polo:</strong> Picada Café</p>
+    <p><strong>Integrantes:</strong> Aloysio Bischoff, Matheus Scherer, Rafael Vinícius Giehl</p>
+    <p>&copy; 2026 — UNNE Projeto Interdisciplinar de Desenvolvimento Web</p>
+  </div>
+  <div class="acessibilidade-footer">
+    <button onclick="toggleAcessibilidade()">Acessibilidade ♿</button>
+    <div id="painelAcessibilidade" class="painel-acessibilidade">
+      <button onclick="estiloAcessivel('escuro')">Modo Escuro</button>
+      <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+      <button onclick="estiloAcessivel('fonte')">Aumentar Fonte</button>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-u" id="toastU"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

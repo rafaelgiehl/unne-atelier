@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlet — UNNE Atelier Couro & Estilo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        :root { --marrom:#3d2b1f; --marrom2:#2a1e15; --dourado:#d4af37; --creme:#faf7f2; --cinza:#888075; --borda:#e0d5c5; --vermelho:#b83232; }
+        .outlet-hero { background:var(--vermelho); position:relative; overflow:hidden; }
+        .outlet-hero::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(-45deg,transparent,transparent 30px,rgba(0,0,0,.06) 30px,rgba(0,0,0,.06) 31px); }
+        .outlet-hero::after { content:'OUTLET'; position:absolute; right:-40px; top:50%; transform:translateY(-50%) rotate(90deg); font-family:'Cormorant Garamond',serif; font-size:7rem; font-weight:600; color:rgba(255,255,255,.06); letter-spacing:.2em; pointer-events:none; white-space:nowrap; }
+        .outlet-hero-inner { position:relative; display:grid; grid-template-columns:1fr auto; align-items:center; gap:40px; padding:52px 60px; }
+        .outlet-hero-texto p.label { font-family:'Jost',sans-serif; font-size:.68rem; font-weight:500; letter-spacing:.4em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:12px; }
+        .outlet-hero-texto h1 { font-family:'Cormorant Garamond',serif; font-size:3.2rem; font-weight:300; color:#fff; line-height:1.1; margin-bottom:14px; }
+        .outlet-hero-texto h1 em { font-style:italic; color:var(--dourado); }
+        .outlet-hero-texto p.desc { font-family:'Jost',sans-serif; font-size:.9rem; font-weight:300; color:rgba(255,255,255,.7); line-height:1.7; max-width:420px; }
+        .outlet-badge-grande { background:var(--dourado); width:140px; height:140px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; animation:pulsar 2.5s ease-in-out infinite; }
+        @keyframes pulsar { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+        .outlet-badge-grande .num { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:600; line-height:1; color:var(--marrom); }
+        .outlet-badge-grande .off { font-family:'Jost',sans-serif; font-size:.75rem; font-weight:600; letter-spacing:.15em; color:var(--marrom); }
+        .outlet-faixa { background:var(--marrom2); padding:12px 40px; display:flex; align-items:center; justify-content:center; gap:24px; }
+        .outlet-faixa p { font-family:'Jost',sans-serif; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:rgba(212,175,55,.7); }
+        .cronometro { display:flex; gap:8px; align-items:center; }
+        .cron-bloco { display:flex; flex-direction:column; align-items:center; background:rgba(212,175,55,.1); border:1px solid rgba(212,175,55,.2); padding:6px 10px; min-width:44px; }
+        .cron-num { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dourado); line-height:1; }
+        .cron-label { font-family:'Jost',sans-serif; font-size:.55rem; letter-spacing:.15em; text-transform:uppercase; color:rgba(212,175,55,.5); margin-top:2px; }
+        .cron-sep { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dourado); opacity:.4; margin-bottom:12px; }
+        .outlet-main { width:90%; max-width:1200px; margin:0 auto; padding:40px 0 60px; }
+        .outlet-header-secao { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; padding-bottom:16px; border-bottom:1px solid var(--borda); }
+        .outlet-header-secao h2 { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:400; color:var(--marrom); }
+        .outlet-header-secao h2 em { font-style:italic; color:var(--vermelho); }
+        .outlet-header-secao p { font-family:'Jost',sans-serif; font-size:.8rem; font-weight:300; color:var(--cinza); }
+        .outlet-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:24px; }
+        .outlet-card { background:#fff; border:1px solid var(--borda); position:relative; transition:transform .2s,box-shadow .2s; }
+        .outlet-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+        .outlet-card-img { position:relative; overflow:hidden; }
+        .outlet-card-img img { width:100%; height:260px; object-fit:cover; display:block; transition:transform .4s; }
+        .outlet-card:hover .outlet-card-img img { transform:scale(1.04); }
+        .outlet-desconto-badge { position:absolute; top:12px; left:12px; background:var(--vermelho); color:#fff; font-family:'Jost',sans-serif; font-size:.72rem; font-weight:600; padding:5px 10px; z-index:2; }
+        .outlet-card-body { padding:16px 18px 20px; }
+        .outlet-card-nome { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:var(--marrom); margin-bottom:10px; }
+        .outlet-precos { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .preco-original { font-family:'Jost',sans-serif; font-size:.82rem; font-weight:300; color:var(--cinza); text-decoration:line-through; }
+        .preco-outlet { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; color:var(--vermelho); }
+        .economia-tag { font-family:'Jost',sans-serif; font-size:.65rem; font-weight:500; background:#faeaea; color:var(--vermelho); padding:3px 8px; display:inline-block; margin-top:8px; }
+        .outlet-loading { grid-column:1/-1; text-align:center; padding:48px; font-family:'Jost',sans-serif; font-size:.85rem; font-weight:300; color:var(--cinza); }
+        @media(max-width:700px){.outlet-hero-inner{grid-template-columns:1fr;padding:36px 24px;text-align:center}.outlet-hero::after{display:none}.outlet-badge-grande{margin:0 auto}.outlet-faixa{flex-direction:column;gap:10px;padding:16px}.outlet-main{width:95%}}
+        body.modo-escuro .outlet-card{background:#1c1c1c;border-color:#333}
+        body.modo-escuro .outlet-card-nome{color:#e8dcc8}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="produtos.html">Coleção</a></li>
+            <li><a href="outlet.html">Outlet</a></li>
+            <li><a href="contato.html">Atendimento</a></li>
+            <li><a href="cadastro.html">Cadastro</a></li>
+            <li><a href="minha-conta.html" id="navLogin">Entrar</a></li>
+            <li>
+                <a href="#" onclick="event.preventDefault();abrirCarrinho()" class="nav-carrinho">
+                    🛍 Carrinho
+                    <span class="nav-carrinho-count" id="navCarrinhoCount">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="outlet-hero">
+        <div class="outlet-hero-inner">
+            <div class="outlet-hero-texto">
+                <p class="label">UNNE Atelier Couro &amp; Estilo</p>
+                <h1>Outlet <em>Especial</em></h1>
+                <p class="desc">Peças selecionadas com 30% de desconto. Couro legítimo de alta qualidade com o melhor preço. Aproveite enquanto durar o estoque!</p>
+            </div>
+            <div class="outlet-badge-grande">
+                <span class="num">30%</span>
+                <span class="off">OFF</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="outlet-faixa">
+        <p>Oferta por tempo limitado</p>
+        <div class="cronometro">
+            <div class="cron-bloco"><span class="cron-num" id="cronH">00</span><span class="cron-label">horas</span></div>
+            <span class="cron-sep">:</span>
+            <div class="cron-bloco"><span class="cron-num" id="cronM">00</span><span class="cron-label">min</span></div>
+            <span class="cron-sep">:</span>
+            <div class="cron-bloco"><span class="cron-num" id="cronS">00</span><span class="cron-label">seg</span></div>
+        </div>
+    </div>
+
+    <div class="outlet-main">
+        <div class="outlet-header-secao">
+            <h2>Produtos em <em>Promoção</em></h2>
+            <p id="totalOutlet">Carregando...</p>
+        </div>
+        <div class="outlet-grid" id="galeriaOutlet">
+            <p class="outlet-loading">Carregando produtos...</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Polo:</strong> Picada Café</p>
+            <p><strong>Integrantes:</strong> Aloysio Bischoff, Matheus Scherer, Rafael Vinícius Giehl</p>
+            <p>&copy; 2026 — UNNE Projeto Interdisciplinar de Desenvolvimento Web</p>
+        </div>
+        <div class="acessibilidade-footer">
+            <button onclick="toggleAcessibilidade()">Acessibilidade ♿</button>
+            <div id="painelAcessibilidade" class="painel-acessibilidade">
+                <button onclick="estiloAcessivel('escuro')">Modo Escuro</button>
+                <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+                <button onclick="estiloAcessivel('fonte')">Aumentar Fonte</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CARRINHO -->
+    <div class="carrinho-overlay" id="carrinhoOverlay" onclick="fecharCarrinho()"></div>
+    <div class="carrinho-drawer" id="carrinhoDrawer">
+        <div class="carr-header"><div class="carr-titulo">🛍 Meu Carrinho<span class="carr-badge" id="carrBadgeHeader">0</span></div><button class="carr-fechar" onclick="fecharCarrinho()">✕</button></div>
+        <div class="carr-cupom"><input type="text" id="inputCupomCarr" placeholder="Código de cupom" maxlength="20" onkeydown="if(event.key==='Enter') aplicarCupomCarr()"><button class="btn-cupom-carr" onclick="aplicarCupomCarr()">Aplicar</button></div>
+        <p class="carr-cupom-msg" id="cupomMsg"></p>
+        <div class="carr-itens" id="carrItens"><div class="carr-vazio"><span class="carr-vazio-icone">🛍</span><p>Seu carrinho está vazio</p></div></div>
+        <div class="carr-footer" id="carrFooter" style="display:none">
+            <div class="carr-linha"><span>Subtotal</span><span id="carrSubtotal">R$ 0,00</span></div>
+            <div class="carr-linha desconto" id="carrLinhaDesconto" style="display:none"><span id="carrDescontoLabel">Cupom</span><span id="carrDescontoValor">− R$ 0,00</span></div>
+            <div class="carr-total"><span>Total</span><span class="carr-total-valor" id="carrTotal">R$ 0,00</span></div>
+            <button class="btn-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

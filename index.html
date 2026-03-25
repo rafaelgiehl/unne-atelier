@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNNE Couro & Estilo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="produtos.html">Coleção</a></li>
+            <li><a href="outlet.html">Outlet</a></li>
+            <li><a href="contato.html">Atendimento</a></li>
+            <li><a href="cadastro.html">Cadastro</a></li>
+            <li><a href="minha-conta.html" id="navLogin">Entrar</a></li>
+            <li>
+                <a href="#" onclick="event.preventDefault();abrirCarrinho()" class="nav-carrinho">
+                    🛍 Carrinho
+                    <span class="nav-carrinho-count" id="navCarrinhoCount">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>UNNE Atelier Couro & Estilo</h1>
+    </header>
+
+    <main>
+        <section class="carousel">
+            <div class="carousel-container">
+                <img id="bannerImg" src="images/banner1.jpg" alt="Banner Principal">
+                <div class="carousel-controls">
+                    <button onclick="mudarBanner(-1)">&#10094; Anterior</button>
+                    <button onclick="mudarBanner(1)">Próximo &#10095;</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="promo">
+            <h2 id="promoTitulo">Excelência em Couro Legítimo</h2>
+            <p id="promoTexto">Clique no botão abaixo para liberar seu cupom de boas-vindas!</p>
+            <button id="btnCupom" onclick="liberarCupom()">Revelar Cupom</button>
+        </section>
+
+        <hr>
+
+        <section class="galeria-produtos">
+            <h2 style="text-align: center; margin-top: 30px;">Destaques da Coleção</h2>
+            <div class="grid-produtos">
+                <div class="card">
+                    <img src="images/bolsalaranja.jpg" alt="Bolsa Executiva">
+                    <h3>Bolsa Executiva</h3>
+                    <p>R$ 499,00</p>
+                </div>
+                <div class="card">
+                    <img src="images/bolsapreta.jpg" alt="Mochila Vintage">
+                    <h3>Mochila Vintage</h3>
+                    <p>R$ 550,00</p>
+                </div>
+                <div class="card">
+                    <img src="images/bolsaazul.jpg" alt="Carteira Premium">
+                    <h3>Carteira Premium</h3>
+                    <p>R$ 180,00</p>
+                </div>
+                <div class="card">
+                    <img src="images/bolsarosa.jpg" alt="Bolsa Tote">
+                    <h3>Bolsa Tote</h3>
+                    <p>R$ 450,00</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>Polo:</strong> Picada Café</p>
+            <p><strong>Integrantes:</strong> Aloysio Bischoff, Matheus Scherer, Rafael Vinícius Giehl</p>
+            <p>&copy; 2026 - Projeto Interdisciplinar de Desenvolvimento Web</p>
+        </div>
+        <div class="acessibilidade-footer">
+            <button onclick="toggleAcessibilidade()">Acessibilidade ♿</button>
+            <div id="painelAcessibilidade" class="painel-acessibilidade">
+                <button onclick="estiloAcessivel('escuro')">Modo Escuro</button>
+                <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+                <button onclick="estiloAcessivel('fonte')">Aumentar Fonte</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CARRINHO -->
+    <div class="carrinho-overlay" id="carrinhoOverlay" onclick="fecharCarrinho()"></div>
+    <div class="carrinho-drawer" id="carrinhoDrawer">
+        <div class="carr-header">
+            <div class="carr-titulo">🛍 Meu Carrinho<span class="carr-badge" id="carrBadgeHeader">0</span></div>
+            <button class="carr-fechar" onclick="fecharCarrinho()">✕</button>
+        </div>
+        <div class="carr-cupom">
+            <input type="text" id="inputCupomCarr" placeholder="Código de cupom" maxlength="20" onkeydown="if(event.key==='Enter') aplicarCupomCarr()">
+            <button class="btn-cupom-carr" onclick="aplicarCupomCarr()">Aplicar</button>
+        </div>
+        <p class="carr-cupom-msg" id="cupomMsg"></p>
+        <div class="carr-itens" id="carrItens">
+            <div class="carr-vazio"><span class="carr-vazio-icone">🛍</span><p>Seu carrinho está vazio</p></div>
+        </div>
+        <div class="carr-footer" id="carrFooter" style="display:none">
+            <div class="carr-linha"><span>Subtotal</span><span id="carrSubtotal">R$ 0,00</span></div>
+            <div class="carr-linha desconto" id="carrLinhaDesconto" style="display:none">
+                <span id="carrDescontoLabel">Cupom</span><span id="carrDescontoValor">− R$ 0,00</span>
+            </div>
+            <div class="carr-total"><span>Total</span><span class="carr-total-valor" id="carrTotal">R$ 0,00</span></div>
+            <button class="btn-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

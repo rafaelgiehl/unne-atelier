@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Nossas Lojas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="paginaLojas">
+    <nav><ul><li><a href="index.html">Home</a></li><li><a href="produtos.html">Coleção</a></li><li><a href="outlet.html">Outlet</a></li><li><a href="unidades.html">Nossas Lojas</a></li><li><a href="contato.html">Atendimento</a><li><a href="cadastro.html">Cadastro</a></li><li><a href="minha-conta.html">Entrar</a></li> </li></ul></nav>
+
+    <main id="boxLojas">
+        <h2>Onde nos encontrar</h2>
+        <p>Unidade Picada Cafe - RS</p>
+        <p>Unidade Nova Petropolis - RS</p>
+        <br>
+        <button onclick="estiloAcessivel('escuro')">Modo Noturno</button>
+        <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+        <button onclick="estiloAcessivel('fonte')">Aumentar Texto</button>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p><strong>Polo:</strong> Picada Cafe</p>
+            <p><strong>Integrantes:</strong> Aloysio Bischoff, Matheus Scherer, Rafael Vinícius Giehl</p>
+            <p>&copy; 2026 - UNNE Projeto Interdisciplinar de Desenvolvimento Web</p>
+        </div>
+            <div class="acessibilidade-footer">
+            <button onclick="toggleAcessibilidade()">Acessibilidade ♿</button>
+
+            <div id="painelAcessibilidade" class="painel-acessibilidade">
+                <button onclick="estiloAcessivel('escuro')">Modo Escuro</button>
+                <button onclick="estiloAcessivel('claro')">Modo Claro</button>
+                <button onclick="estiloAcessivel('fonte')">Aumentar Fonte</button>
+            </div>
+        </div>
+    </footer>
+</body>
+    <script src="script.js"></script>
+</body>
+</html>
